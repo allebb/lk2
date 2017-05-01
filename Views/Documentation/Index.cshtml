@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Documentation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<h1>Documentation</h1>
+<p>The LK2 shortner service provides users and site owners the ability to generate and share shortened URLs for branding and social media purposes.</p>
+<p>The LK2 service is free for all to use!</p>
+<h2>API</h2>
+<p>We expose our services to developers via an Application Programming Interface (API), developers can therfore interact in a programmatic way with the LK2 platform.
+<p>Our API does not require any authentication as it is designed to be a public service.</p>
+<p>The current API version is <kbd>1.0</kbd>.</p>
+<h3>Create a new short URL</h3>
+<p><span class="badge new black left" data-badge-caption="POST"></span> /api/v1/create</p>
+<p>Creates a short URL from a long URL, the request body to consist of a single JSON object.</p>
+<strong>Parameters</strong>
+<p>url - The URL to be shortened (eg. http://www.google.com/)</p>
+<strong>Return values</strong>
+<p><code>hash</code> - The short hash (the short link string)</p>
+<p><code>redirect</code> - The original URL of which has been shortened.</p>
+<p><code>shortened</code> - The full, shortened version of the URL.</p>
+<strong>Example request</strong>
+<p>
+    <pre class="code">
+POST /api/v1/create
+HTTP/1.1
+Host: @ViewBag.Host
+Accept: application/json
+Content-Type: application/json
+Content-Length: 32
+{
+ 	"url": "http://example.com"
+}
+    </pre>
+</p>
+<p><strong>Example response</strong></p>
+<p>
+    <pre class="code">
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Content-Type: application/json; charset=utf-8
+{
+    "hash": "ea",
+    "redirect": "http://example.com",
+    "shortened": "@ViewBag.BaseUrl/ea"
+}
+    </pre>
+</p>

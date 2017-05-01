@@ -1,0 +1,109 @@
+@{
+    ViewBag.Title = "URL Shortner Service";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <h4>Here it is...</h4>
+        <div class="center">
+            <p id="shorturl-link" class="flow-text">http://lk2.in/{link}</p>
+            <button class="btn btn-copy" data-clipboard-target="#shorturl-link">
+                Copy to clipboard
+            </button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+</div>
+<br><br>
+<h1 class="header center orange-text">Shorten all the things!</h1>
+<div class="row center">
+    <h5 class="header col s12 light">A simple ASP.NET Core URL shortner app for demonstrating deployment on Linux and Nginx!</h5>
+</div>
+<div class="row">
+    <form id="shortner" action="@Url.RouteUrl("generate")" method="post">
+        <div class="input-field col s10 m8 l8 offset-m2 offset-s1 offset-l2">
+            <input id="url" name="url" type="text" class="validate">
+            <label for="url">URL to shorten...</label>
+        </div>
+    </form>
+</div>
+<div class="section">
+    <div class="row">
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <h2 class="center light-blue-text"><i class="material-icons">flash_on</i></h2>
+                <h5 class="center">Quick an easy</h5>
+                <p class="light">The LK2 shortner service is easy and intuitive to use. Provide your long web links and we'll shorten them for you in flash!</p>
+            </div>
+        </div>
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <h2 class="center light-blue-text"><i class="material-icons">settings</i></h2>
+                <h5 class="center">Public API</h5>
+                <p class="light">We provide a REST based API making it super easy for users and developers alike to integrate into their own sites and applications!</p>
+            </div>
+        </div>
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <h2 class="center light-blue-text"><i class="material-icons">group</i></h2>
+                <h5 class="center">Need help?</h5>
+                <p class="light">Check out our <a href="@Url.RouteUrl("documentation")">documentation page</a> to explore our service further and get answers to common issues and questions.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section js
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            // Initiate the modal!
+            $('.modal').modal();
+
+            // Initiate the clipboard.js code.
+            var clipboard = new Clipboard('.btn-copy');
+
+            clipboard.on('success', function (e) {
+                Materialize.toast('Copied!', 2000);
+                e.clearSelection();
+            });
+
+            clipboard.on('error', function (e) {
+                Materialize.toast('Unable to copy :(', 3000);
+            });
+        });
+
+        // Handle the URL shortner form.
+        $('#shortner').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                method: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize()
+            }).done(function (data, textsStatus, xhr) {
+                $('#shorturl-link').text(data.shortened);
+                $('#modal1').modal('open');
+                $('#url').val('');
+                $('#url').blur();
+            }).fail(function (xhr) {
+                var data = xhr.responseJSON;
+                if (xhr.status === 500) {
+                    Materialize.toast('Server error!', 3000);
+                }
+                if (xhr.status === 400) {
+                    Materialize.toast('Invalid URL!', 3000);
+                }
+            }).always(function (xhr) {
+                //
+            });
+        });
+
+    </script>
+}
